@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const colors = require('colors');
+const errorHandler = require('./middleware/errorHandler');
 const connectDB = require('./config/db');
 
 // Load Env Vars
@@ -27,6 +28,8 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Mount Routers
 app.use('/api/v1/bootcamps', bootcampRoutes);
+
+app.use(errorHandler);
 
 const server = app.listen(PORT, () => {
   console.log(
