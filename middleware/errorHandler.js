@@ -4,7 +4,7 @@ const errorHandler = (err, req, res, next) => {
   let error = { ...err };
   error.message = err.message;
 
-  console.log(err.errors);
+  console.log(err.stack.red);
   // Mongoose Bad ObjectId
   if (err.name === 'CastError') {
     const message = `Bootcamp not found with ID: ${err.value}`;
