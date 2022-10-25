@@ -1,5 +1,6 @@
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/asyncHandler');
+const geocoder = require('../utils/geocoder');
 const Bootcamp = require('../models/bootcampModel');
 
 // @desc    Get all bootcamps
@@ -69,4 +70,40 @@ exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
     );
   }
   res.status(200).json({ success: true, data: {} });
+});
+
+// @desc    Get bootcamps within a radius
+// @route   GET /api/v1/bootcamps/radius/:zipcode/:distance
+// @access  Private
+exports.getBootcampsInRadius = asyncHandler(async (req, res, next) => {
+  const { zipcode, distance, units } = req.params;
+  const loc = await geocoder.geocode(zipcode);
+  const lat = loc[0].latitude;
+  const lng = loc[0].longitude;
+  let radius;
+
+  // Calulate radius using radians
+  // Divide distance by radius of earth --- 3,963 mi / 6,378 km
+  if (units === 'mi') {
+    radius = distance / 3963;
+  } else if (units === 'km') {
+    radius = distance / 6378;
+  } else {
+    return next(
+      new ErrorResponse(
+        `${req.params.units} is not a valid unit of measurement`,
+        400
+      )
+    );
+  }
+
+  const bootcamps = await Bootcamp.find({
+    location: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+  });
+
+  res.status(200).json({
+    success: true,
+    count: bootcamps.length,
+    data: bootcamps,
+  });
 });
