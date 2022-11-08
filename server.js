@@ -1,6 +1,8 @@
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
+const fileUpload = require('express-fileupload');
 const colors = require('colors');
 const errorHandler = require('./middleware/errorHandler');
 const connectDB = require('./config/db');
@@ -23,9 +25,13 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
+app.use(fileUpload());
 if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 }
+
+// Set Static Folder
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Mount Routers
 app.use('/api/v1/bootcamps', bootcampRoutes);
