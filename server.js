@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const fileUpload = require('express-fileupload');
+const cookieParser = require('cookie-parser');
 const colors = require('colors');
 const errorHandler = require('./middleware/errorHandler');
 const connectDB = require('./config/db');
@@ -24,6 +25,7 @@ const app = express();
 
 // Middleware
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.use(fileUpload());
