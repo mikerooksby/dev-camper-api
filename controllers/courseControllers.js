@@ -46,6 +46,7 @@ exports.getCourse = asyncHandler(async (req, res, next) => {
 // @access  Private
 exports.addCourse = asyncHandler(async (req, res, next) => {
   req.body.bootcamp = req.params.bootcampId;
+  req.body.user = req.user.id;
 
   const bootcamp = await Bootcamp.findById(req.params.bootcampId);
 
@@ -54,6 +55,15 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
       new ErrorResponse(
         `No bootcamp found with ID ${req.params.bootcampId}`,
         404
+      )
+    );
+  }
+
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(
+        `User ${req.user.id} is not is not authorized to add a course to bootcamp ${req.params.bootcampId}`,
+        401
       )
     );
   }
@@ -70,21 +80,29 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
 // @route   PUT /api/v1/courses/:id
 // @access  Private
 exports.updateCourse = asyncHandler(async (req, res, next) => {
-  const updatedCourse = await Course.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    { new: true, runValidators: true }
-  );
+  const course = await Course.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
 
-  if (!updatedCourse) {
+  if (!course) {
     return next(
       new ErrorResponse(`No course found with ID ${req.params.id}`, 404)
     );
   }
 
+  if (course.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(
+        `User ${req.user.id} is not is not authorized to update course ${req.params.id}`,
+        401
+      )
+    );
+  }
+
   res.status(200).json({
     success: true,
-    data: updatedCourse,
+    data: course,
   });
 });
 
@@ -97,6 +115,15 @@ exports.deleteCourse = asyncHandler(async (req, res, next) => {
   if (!course) {
     return next(
       new ErrorResponse(`No course found with ID ${req.params.id}`, 404)
+    );
+  }
+
+  if (course.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(
+        `User ${req.user.id} is not is not authorized to delete course ${req.params.id}`,
+        401
+      )
     );
   }
 
