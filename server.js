@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
+const mongoSanitize = require('express-mongo-sanitize');
 const fileUpload = require('express-fileupload');
 const cookieParser = require('cookie-parser');
 const colors = require('colors');
@@ -31,6 +32,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 app.use(fileUpload());
+app.use(mongoSanitize());
 if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 }
