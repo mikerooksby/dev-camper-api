@@ -1,25 +1,39 @@
 # DevCamper API
 
-### Original Course By [Traversy Media](https://www.traversymedia.com/)
+> Backend API for DevCamper application, which is a bootcamp directory website.
 
 ___
+## Original Course By [Traversy Media](https://www.traversymedia.com/)
+---
 
-#### Production Script
-```shell
+## Usage
+
+Rename "config/.env.example" to "config/.env" and update the values/settings to your own
+
+## Install Dependancies
+```
+npm install
+```
+
+### Production Script
+```
 npm run start
 ```
 
-#### Dev Script
-```shell
+### Dev Script
+```
 npm run dev
 ```
 
-#### Seed Database
-```shell
+### Seed Database
+```
 npm run seed
 ```
 
-#### Purge Database
-```shell
+### Purge Database
+```
 npm run purge
 ```
+
+- Version: 1.0.0
+- License: MIT
